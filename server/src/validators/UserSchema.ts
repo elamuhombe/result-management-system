@@ -1,7 +1,7 @@
 //src/validators/UserSchema.ts
 import { z } from 'zod';
 
-const UserSchema = z.object({
+export const UserSchema = z.object({
   userId: z.string().uuid(), // Validate userId as a UUID
   username: z.string()
     .min(3, { message: "Username must be at least 3 characters long" }) // Minimum length
