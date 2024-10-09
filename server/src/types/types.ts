@@ -17,7 +17,7 @@ export interface IStudent {
   results?: string[]; // Array of result IDs (optional)
 }
 
-export interface Result {
+export interface IResult {
   resultId: string; // Unique identifier for the result
   studentId: string; // ID of the student associated with the result
   attendanceMarks?: number; // Marks for attendance (optional)
