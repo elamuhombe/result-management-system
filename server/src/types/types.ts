@@ -29,3 +29,19 @@ export interface IResult {
   createdAt?: Date; // Optional timestamp for creation
   updatedAt?: Date; // Optional timestamp for last update
 }
+
+export interface IAttendance {
+  attendanceId: string;      // ObjectId
+  studentId: string;         // ObjectId reference to Student
+  date: Date;                 // attendance date
+  status: 'Present' | 'Absent'; // attendance status
+}
+
+export interface IProject {
+  projectId: string;        // ObjectId
+  studentId: string;        // ObjectId reference to Student
+  project_title: string;     // title of the project
+  submission_date: Date;     // date of submission
+  marks_received: number;     // marks received for the project
+}
+
