@@ -5,7 +5,7 @@ import { IResult } from "../types/types";
 
 const ResultSchema: Schema<IResult & Document> = new Schema({
 resultId: {type: String, required: true},
-studentId: {type: Schema.Types.ObjectId, ref: "Students", required: true},
+studentId: {type: String, ref: "Students", required: true},
 attendanceMarks: {type: Number},
 projectReviewMarks: {type: Number},
 assessmentMarks: {type: Number},
