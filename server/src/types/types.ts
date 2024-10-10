@@ -5,8 +5,6 @@ export interface IUser {
   username: string; // Username for login
   password: string; // Hashed password
   role: "Admin" | "Student"; // User role
-  createdAt?: Date; // Optional timestamp for creation
-  updatedAt?: Date; // Optional timestamp for last update
 }
 
 export interface IStudent {
@@ -26,8 +24,6 @@ export interface IResult {
   projectSubmissionMarks?: number; // Marks for project submissions (optional)
   linkedinPostMarks?: number; // Marks for LinkedIn posts (optional)
   totalMarks?: number; // Calculated total marks (optional)
-  createdAt?: Date; // Optional timestamp for creation
-  updatedAt?: Date; // Optional timestamp for last update
 }
 
 export interface IAttendance {
