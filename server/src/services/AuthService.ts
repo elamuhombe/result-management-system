@@ -1,7 +1,9 @@
 //src/services/AuthService.ts
+import { JsonWebTokenError } from "jsonwebtoken";
 import { UserModel } from "../models";
 import { IUser } from "../types/types";
 import * as bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 class AuthService {
   //register a new user
@@ -27,12 +29,34 @@ class AuthService {
     });
 
     return newUser;
-
-  
   }
-    // login an existing user
+  // login an existing user
+  async login(
+    username: string,
+    password: string
+  ): Promise<{ user: Partial<IUser>; token: string }> {
+    //find the user by username
+    const user = await UserModel.findOne({ username });
 
+    if (!user) {
+      throw new Error("inavlid username");
+    }
     // compare the password
+    const validPassword = bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      throw new Error("invalid password");
+    }
 
-    // generate a jwt token
+    // Generate a JWT token
+    const token = jwt.sign(
+      { id: user.userId, role: user.role },
+      process.env.JWT_SECRET || "your_jwt_secret",
+      {
+        expiresIn: "1h", // Token expiration time
+      }
+    );
+
+    // return only essential user information
+    return { user: { username: user.username, role: user.role }, token };
+  }
 }

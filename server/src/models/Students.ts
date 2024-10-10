@@ -5,7 +5,7 @@ import { IStudent } from "../types/types";
 // Extend Document to include the IStudent interface
 const StudentSchema = new Schema<IStudent & Document>(
   {
-    studentId: { type: Schema.Types.ObjectId, required: true },
+    studentId: { type: String, required: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true, match: /.+@.+\..+/ }, // Basic email format validation
