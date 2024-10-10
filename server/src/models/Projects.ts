@@ -6,7 +6,7 @@ import { IProject } from "../types/types";
 const ProjectSchema: Schema<IProject & Document> = new Schema(
   {
     projectId: { type: String, required: true, unique: true },
-    studentId: {type: Schema.Types.ObjectId, ref: "Student", required: true},
+    studentId: {type: Schema.Types.ObjectId, ref: "Students", required: true},
     project_title: { type: String, required: true },
     submission_date: { type: Date, required: true },
     marks_received: { type: Number, required: true },

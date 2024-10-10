@@ -5,7 +5,7 @@ import { IAttendance } from "../types/types";
 
 const AttendanceSchema: Schema<IAttendance & Document> = new Schema(
   {
-    studentId: {type: Schema.Types.ObjectId, ref: "Student", required: true},
+    studentId: {type: Schema.Types.ObjectId, ref: "Students", required: true},
     attendanceId: { type: String, required: true, unique: true },
     date: { type: Date, required: true },
     status: { type: String, enum: ["Present", "Absent"], required: true },
