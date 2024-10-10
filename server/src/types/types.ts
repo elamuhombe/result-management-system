@@ -1,5 +1,7 @@
 //src/types/types.ts
 
+import { Types } from "mongoose";
+
 export interface IUser {
   userId: string; // Unique identifier for the user
   username: string; // Username for login
@@ -8,36 +10,54 @@ export interface IUser {
 }
 
 export interface IStudent {
-  studentId: string; // Unique identifier for the student
-  firstName: string; // First name of the student
-  lastName: string; // Last name of the student
-  email: string; // Student's email address
-  results?: string[]; // Array of result IDs (optional)
+  studentId: Types.ObjectId;
+  firstName: string;
+  lastName: string;
+  email: string;
+  results?: string[];
 }
 
 export interface IResult {
-  resultId: string; // Unique identifier for the result
-  studentId: string; // ID of the student associated with the result
-  attendanceMarks?: number; // Marks for attendance (optional)
-  projectReviewMarks?: number; // Marks for project review (optional)
-  assessmentMarks?: number; // Marks for assessments (optional)
-  projectSubmissionMarks?: number; // Marks for project submissions (optional)
-  linkedinPostMarks?: number; // Marks for LinkedIn posts (optional)
-  totalMarks?: number; // Calculated total marks (optional)
+  resultId: string;
+  studentId: Types.ObjectId;
+  attendanceMarks: number;
+  projectReviewMarks: number;
+  assessmentMarks: number;
+  projectSubmissionMarks: number;
+  linkedinPostMarks: number;
+  totalMarks: number;
 }
 
 export interface IAttendance {
-  attendanceId: string;      // ObjectId
-  studentId: string;         // ObjectId reference to Student
-  date: Date;                 // attendance date
-  status: 'Present' | 'Absent'; // attendance status
+  attendanceId: string;
+  studentId: Types.ObjectId;
+  date: Date;
+  status: "Present" | "Absent";
+  marks: number;
 }
 
 export interface IProject {
-  projectId: string;        // ObjectId
-  studentId: string;        // ObjectId reference to Student
-  project_title: string;     // title of the project
-  submission_date: Date;     // date of submission
-  marks_received: number;     // marks received for the project
+  projectId: string; // ObjectId
+  studentId: Types.ObjectId; // ObjectId reference to Student
+  project_title: string; // title of the project
+  submission_date: Date; // date of submission
+  marks_received: number; // marks received for the project
 }
 
+export interface IAssessmentMark {
+  studentId: Types.ObjectId;
+  assessmentId: string; // ID of the assessment
+  score: number; // Score achieved in the assessment
+  maximumScore: number; // Maximum score for the assessment
+}
+
+export interface ILinkedInPostMark {
+  studentId: Types.ObjectId;
+  postId: string; // ID of the LinkedIn post
+  score: number; // Score given for the post
+  engagementMetrics?: {
+    likes: number; // Number of likes
+    comments: number; // Number of comments
+    shares: number; // Number of shares
+  };
+}
