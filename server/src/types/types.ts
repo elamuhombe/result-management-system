@@ -10,7 +10,7 @@ export interface IUser {
 }
 
 export interface IStudent {
-  studentId: Types.ObjectId;
+  studentId: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -19,7 +19,7 @@ export interface IStudent {
 
 export interface IResult {
   resultId: string;
-  studentId: Types.ObjectId;
+  studentId: string;
   attendanceMarks: number;
   projectReviewMarks: number;
   assessmentMarks: number;
@@ -30,7 +30,7 @@ export interface IResult {
 
 export interface IAttendance {
   attendanceId: string;
-  studentId: Types.ObjectId;
+  studentId: string;
   date: Date;
   status: "Present" | "Absent";
   marks: number;
@@ -38,24 +38,24 @@ export interface IAttendance {
 
 export interface IProject {
   projectId: string; // ObjectId
-  studentId: Types.ObjectId; // ObjectId reference to Student
+  studentId: string; // ObjectId reference to Student
   project_title: string; // title of the project
   submission_date: Date; // date of submission
   marks_received: number; // marks received for the project
 }
 
 export interface IAssessmentMark {
-  studentId: Types.ObjectId;
+  studentId: string;
   assessmentId: string; // ID of the assessment
   score: number; // Score achieved in the assessment
   maximumScore: number; // Maximum score for the assessment
 }
 
 export interface ILinkedInPostMark {
-  studentId: Types.ObjectId;
+  studentId: string;
   postId: string; // ID of the LinkedIn post
   score: number; // Score given for the post
-  engagementMetrics?: {
+  engagementMetrics: {
     likes: number; // Number of likes
     comments: number; // Number of comments
     shares: number; // Number of shares
