@@ -1,6 +1,6 @@
 //src/types/types.ts
 
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 export interface IUser {
   userId: string; // Unique identifier for the user
@@ -10,7 +10,7 @@ export interface IUser {
 }
 
 export interface IStudent {
-  studentId: string;
+  uniqueStudentId: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -19,7 +19,7 @@ export interface IStudent {
 
 export interface IResult {
   resultId: string;
-  studentId: string;
+  studentId: mongoose.Types.ObjectId;
   attendanceMarks: number;
   projectReviewMarks: number;
   assessmentMarks: number;
@@ -30,7 +30,7 @@ export interface IResult {
 
 export interface IAttendance {
   attendanceId: string;
-  studentId: string;
+  studentId: mongoose.Types.ObjectId;
   date: Date;
   status: "Present" | "Absent";
   marks: number;
@@ -38,21 +38,21 @@ export interface IAttendance {
 
 export interface IProject {
   projectId: string; // ObjectId
-  studentId: string; // ObjectId reference to Student
+  studentId: mongoose.Types.ObjectId // ObjectId reference to Student
   project_title: string; // title of the project
   submission_date: Date; // date of submission
   marks_received: number; // marks received for the project
 }
 
 export interface IAssessmentMark {
-  studentId: string;
+  studentId: mongoose.Types.ObjectId;
   assessmentId: string; // ID of the assessment
   score: number; // Score achieved in the assessment
   maximumScore: number; // Maximum score for the assessment
 }
 
 export interface ILinkedInPostMark {
-  studentId: string;
+  studentId: mongoose.Types.ObjectId;
   postId: string; // ID of the LinkedIn post
   score: number; // Score given for the post
   engagementMetrics: {
