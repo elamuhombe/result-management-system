@@ -4,13 +4,12 @@ import mongoose, { model, Schema } from "mongoose";
 import { IResult } from "../types/types";
 
 const ResultSchema: Schema<IResult & Document> = new Schema({
-resultId: {type: String, required: true},
 studentId:{  type: mongoose.Schema.Types.ObjectId, required: true, ref: "Students"},
-attendanceMarks: {type: Number},
-projectReviewMarks: {type: Number},
-assessmentMarks: {type: Number},
+attendanceMarks: {type: mongoose.Schema.Types.ObjectId, required: true, ref: "Attendance"},
+projectReviewMarks: {type: mongoose.Schema.Types.ObjectId, required: true, ref:"Projects"},
+assessmentMarks: {type: mongoose.Schema.Types.ObjectId, required: true, ref:"Assessment"},
 projectSubmissionMarks: {type: Number},
-linkedinPostMarks: {type: Number},
+linkedinPostMarks: {type:mongoose.Schema.Types.ObjectId, required: true, ref: "LinkedIn"},
 totalMarks: {type: Number}
 },{timestamps: true})
 
