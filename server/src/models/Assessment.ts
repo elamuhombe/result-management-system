@@ -11,6 +11,6 @@ const AssessmentSchema: Schema<IAssessmentMark & Document>= new Schema({
     
 },{timestamps: true})
 
-const AssessementModel = model <IAssessmentMark & Document>("Assessment", AssessmentSchema)
+const AssessmentModel = model <IAssessmentMark & Document>("Assessment", AssessmentSchema)
 
-export default AssessementModel
+export default AssessmentModel
