@@ -1,10 +1,10 @@
 //src/models/Assessment.ts
 
-import { model, Schema } from "mongoose"
+import mongoose, { model, Schema } from "mongoose"
 import { IAssessmentMark } from "../types/types"
 
 const AssessmentSchema: Schema<IAssessmentMark & Document>= new Schema({
-    studentId:{type: String, unique: true, required: true, ref: "Students"},
+    studentId:{  type: mongoose.Schema.Types.ObjectId, required: true, ref: "Students"},
     assessmentId:{type: String, unique: true, required: true},
     score:{type: Number, required: true},
     maximumScore:{type: Number, required: true}
