@@ -4,11 +4,15 @@ import { UserModel } from "../models";
 import { IUser } from "../types/types";
 import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { UserSchema } from "../validators/UserSchema";
 
 class AuthService {
   //register a new user
-  async registerUser(userData: Omit<IUser, "userId">): Promise<IUser> {
-    const { username, password, role } = userData;
+  async registerUser(userData: IUser): Promise<IUser> {
+      // Validate request body
+      const validatedData = UserSchema.parse(userData)
+
+    const { username, password, role } = validatedData;
 
     // check if user already exists
     const existingUser = await UserModel.findOne({ username });
@@ -22,13 +26,13 @@ class AuthService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // create a new user
-    const newUser = await UserModel.create({
+    const newUser = new UserModel({
       username,
       password: hashedPassword,
       role,
     });
 
-    return newUser;
+    return await newUser.save();
   }
   // login an existing user
   async login(
@@ -42,14 +46,14 @@ class AuthService {
       throw new Error("inavlid username");
     }
     // compare the password
-    const validPassword = bcrypt.compare(password, user.password);
+    const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       throw new Error("invalid password");
     }
 
     // Generate a JWT token
     const token = jwt.sign(
-      { id: user.userId, role: user.role },
+      { username: user.username, role: user.role },
       process.env.JWT_SECRET || "your_jwt_secret",
       {
         expiresIn: "1h", // Token expiration time
