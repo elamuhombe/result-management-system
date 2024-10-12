@@ -9,7 +9,7 @@ const StudentSchema = new Schema<IStudent & Document>(
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true, match: /.+@.+\..+/ }, // Basic email format validation
-    results: { type: [String], default: [] },
+    results: { type: [Number], default: [] },
   },
   { timestamps: true } // Enable automatic timestamps
 );
