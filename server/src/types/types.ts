@@ -28,6 +28,7 @@ export interface IResult {
 
 export interface IAttendance {
   studentId: mongoose.Types.ObjectId;
+  uniqueStudentId: string;
   date: Date;
   status: "Present" | "Absent";
   marks: number;
