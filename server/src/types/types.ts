@@ -36,6 +36,7 @@ export interface IAttendance {
 
 export interface IProject {
   studentId: mongoose.Types.ObjectId // ObjectId reference to Student
+  uniqueStudentId: string;
   project_title: string; // title of the project
   submission_date: Date; // date of submission
   review_score: number; // marks received for the project review
