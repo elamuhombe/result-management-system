@@ -6,7 +6,7 @@ import { IAttendance } from "../types/types";
 const AttendanceSchema: Schema<IAttendance & Document> = new Schema(
   {
     studentId:{  type: mongoose.Schema.Types.ObjectId, required: true, ref: "Students"},
-    attendanceId: { type: String, required: true, unique: true },
+    uniqueStudentId: { type: String, required: true, ref: "Students" },
     date: { type: Date, required: true },
     status: { type: String, enum: ["Present", "Absent"], required: true },
     marks: {type: Number, required: true}
