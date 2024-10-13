@@ -1,10 +1,16 @@
-//src/validators/ProjectSchema.ts
-import {z} from 'zod'
+//src/validators/ProjectsSchema.ts
+import { z } from 'zod';
+import mongoose from 'mongoose';
+
 // Define the validation schema for the IProject interface
 export const projectSchema = z.object({
-    projectId: z.string().nonempty("Project ID is required"), // Required string for the ObjectId
-    studentId: z.string().nonempty("Student ID is required"), // Required string for the ObjectId reference to Student
+    uniqueStudentId: z.string().nonempty("Unique Student Id is required"),
+    studentId: z.custom<mongoose.Types.ObjectId>((value) => {
+        return mongoose.Types.ObjectId.isValid(value);
+    }, "Invalid Student ID"), // Required ObjectId reference to Student
     project_title: z.string().nonempty("Project title is required"), // Required string for the project title
     submission_date: z.date(), // Required date for submission
-    marks_received: z.number().nonnegative("Marks received must be a non-negative number"), // Required non-negative number for marks received
-  });
+    review_score: z.number().nonnegative("Review score must be a non-negative number"), // Required number for marks received for project review
+    submission_score: z.number().nonnegative("Submission score must be a non-negative number"), // Required number for marks received for project submission
+    maximum_score: z.number().nonnegative("Maximum score must be a non-negative number") // Required number for the maximum score
+});
