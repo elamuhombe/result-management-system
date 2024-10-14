@@ -1,16 +1,45 @@
-//src/models/Assessment.ts
+// src/models/AssessmentModel.ts
 
-import mongoose, { model, Schema } from "mongoose"
-import { IAssessmentMark } from "../types/types"
+import mongoose, { Document, Schema } from "mongoose";
+import { IAssessmentMark } from "../types/types"; // Adjust import path as necessary
 
-const AssessmentSchema: Schema<IAssessmentMark & Document>= new Schema({
-    studentId:{  type: mongoose.Schema.Types.ObjectId, required: true, ref: "Students"},
-    assessmentId:{type: String, unique: true, required: true},
-    score:{type: Number, required: true},
-    maximumScore:{type: Number, required: true}
-    
-},{timestamps: true})
+// Create a Mongoose schema for assessment marks
+const assessmentMarkSchema: Schema = new Schema<IAssessmentMark>(
+  {
+    uniqueStudentId: {
+      type: String,
+      required: true,
+      trim: true, // Trim whitespace
+    },
+    assessment_title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    submission_date: {
+        type: Date,
+        required: true, // Make this field required
+    },
+    assessment_score: {
+      type: Number,
+      required: true,
+      min: 0, // Minimum value
+    },
+    maximumScore: {
+      type: Number,
+      required: true,
+      min: 1, // Minimum value
+    },
+  },
+  {
+    timestamps: true, // Automatically manage createdAt and updatedAt timestamps
+  }
+);
 
-const AssessmentModel = model <IAssessmentMark & Document>("Assessment", AssessmentSchema)
+// Create a model from the schema
+const AssessmentModel = mongoose.model<IAssessmentMark & Document>(
+  "AssessmentMark",
+  assessmentMarkSchema
+);
 
-export default AssessmentModel
+export { AssessmentModel }; // Export the model
