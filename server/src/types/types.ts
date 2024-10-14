@@ -45,8 +45,10 @@ export interface IProject {
 }
 
 export interface IAssessmentMark {
-  studentId: mongoose.Types.ObjectId;
+  uniqueStudentId: string;
+  assessment_title: string;
   assessment_score: number; // Score achieved in the assessment
+  submission_date: Date,
   maximumScore: number; // Maximum score for the assessment
 }
 
