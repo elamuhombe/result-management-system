@@ -17,13 +17,13 @@ export interface IStudent {
 }
 
 export interface IResult {
+  uniqueStudentId: string;
   studentId: mongoose.Types.ObjectId;
-  attendanceMarks: mongoose.Types.ObjectId;
-  projectReviewMarks: mongoose.Types.ObjectId;
-  assessmentMarks: mongoose.Types.ObjectId;
-  projectSubmissionMarks: number;
-  linkedinPostMarks: mongoose.Types.ObjectId;
-  totalMarks: number;
+  attendance_score: number;
+  project_review_score: number;
+  assessment_score: number;
+  project_submission_score: number;
+  linkedin_score: number;
 }
 
 export interface IAttendance {
@@ -31,7 +31,7 @@ export interface IAttendance {
   uniqueStudentId: string;
   date: Date;
   status: "Present" | "Absent";
-  marks: number;
+  attendance_score: number;
 }
 
 export interface IProject {
@@ -39,21 +39,21 @@ export interface IProject {
   uniqueStudentId: string;
   project_title: string; // title of the project
   submission_date: Date; // date of submission
-  review_score: number; // marks received for the project review
-  submission_score: number // marks received for  the project submission
+  project_review_score: number; // marks received for the project review
+  project_submission_score: number // marks received for  the project submission
   maximum_score: number
 }
 
 export interface IAssessmentMark {
   studentId: mongoose.Types.ObjectId;
-  score: number; // Score achieved in the assessment
+  assessment_score: number; // Score achieved in the assessment
   maximumScore: number; // Maximum score for the assessment
 }
 
 export interface ILinkedInPostMark {
   studentId: mongoose.Types.ObjectId;
   postId: string; // ID of the LinkedIn post
-  score: number; // Score given for the post
+  linkedin_score: number; // Score given for the post
   engagementMetrics: {
     likes: number; // Number of likes
     comments: number; // Number of comments

@@ -46,7 +46,7 @@ class ProjectService {
         return existingProjectData.toObject(); // Return the project data as an object
     }
 
-    // Get all project data for all students (add this method)
+    // Get all project data for all students
     async getAllProjects(): Promise<IProject[]> {
         return ProjectModel.find({}).then(projects => {
             return projects.map(project => project.toObject()); // Return an array of project objects
