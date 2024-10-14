@@ -51,7 +51,7 @@ export interface IAssessmentMark {
 }
 
 export interface ILinkedInPostMark {
-  studentId: mongoose.Types.ObjectId;
+  uniqueStudentId: string;
   postId: string; // ID of the LinkedIn post
   linkedin_score: number; // Score given for the post
   engagementMetrics: {
