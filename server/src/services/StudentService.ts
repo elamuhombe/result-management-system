@@ -10,7 +10,7 @@ export class StudentService {
   addStudent(req: Request, studentData: IStudent): Promise<IStudent> {
     // Validate student data
     const validatedStudentData = studentSchema.parse(studentData);
-    const { uniqueStudentId, firstName, lastName, email } = validatedStudentData;
+    const {uniqueStudentId} = validatedStudentData
 
     // Check if there is an existing student
     return StudentModel.findOne({ uniqueStudentId }).then(existingStudent => {
@@ -20,10 +20,8 @@ export class StudentService {
 
       // Create and save a new student
       const newStudent = new StudentModel({
-        uniqueStudentId,
-        firstName,
-        lastName,
-        email,
+      
+       ...validatedStudentData
       });
 
       return newStudent.save(); // Return the saved student
