@@ -5,53 +5,59 @@ import { IProject } from "../types/types";
 import { projectSchema } from "../validators/ProjectSchema";
 
 class ProjectService {
-    async addProjectMarks(req: Request): Promise<IProject> {
-        // Extract project data from the request body
-        const projectData = req.body;
+   // Method to add project data
+async addProjectData(req: Request, projectData: IProject): Promise<IProject> {
+    // Validate the incoming project data
+    const validatedProjectData = projectSchema.parse(projectData);
 
-        // Validate project submission data
-        const validatedProjectSubmissionData = projectSchema.parse(projectData);
-        const { uniqueStudentId, project_title, submission_date, review_score, submission_score, maximum_score } = validatedProjectSubmissionData;
+    // Destructure the validated project data
+    const { uniqueStudentId } = validatedProjectData;
 
-        // Check for existing project marks
-        const existingProjectMarks = await ProjectModel.findOne({ uniqueStudentId });
-
-        // Check if there are existing marks for the student
-        if (existingProjectMarks) {
-            throw new Error(`Student project submission marks for student with unique student ID ${uniqueStudentId} already exist.`);
-        }
-
-        // Create and save the new project submission marks
-        const newStudentProjectSubmissionMarks = new ProjectModel({
-            uniqueStudentId,
-            project_title,
-            submission_date,
-            review_score,
-            submission_score,
-            maximum_score
-        });
-
-        return newStudentProjectSubmissionMarks.save(); // Return the saved project data
+    // Check for existing project data
+    const existingProjectData = await ProjectModel.findOne({ uniqueStudentId });
+    if (existingProjectData) {
+        throw new Error(`Project data for student with unique ID: ${uniqueStudentId} already exists.`);
     }
 
-    // Get project data for a specific student using uniqueId
-    async getProjectDataByUniqueId(req: Request): Promise<IProject> {
-        const { uniqueStudentId } = req.params;
-        const existingProjectData = await ProjectModel.findOne({ uniqueStudentId });
+    // Create new project data using the spread operator
+    const newProjectData = new ProjectModel({
+        ...validatedProjectData, // Spread the validated data to include all fields
+    });
 
-        // Check if project data exists
-        if (!existingProjectData) {
-            throw new Error(`No project data found for existing student with unique student ID: ${uniqueStudentId}`);
-        }
-        return existingProjectData.toObject(); // Return the project data as an object
-    }
-
-    // Get all project data for all students
-    async getAllProjects(): Promise<IProject[]> {
-        return ProjectModel.find({}).then(projects => {
-            return projects.map(project => project.toObject()); // Return an array of project objects
-        });
-    }
+    return newProjectData.save(); // Save the new project data
 }
 
+
+    // Method to update project data for a single student
+async updateProjectData(req: Request, projectData: IProject): Promise<IProject> {
+    const { uniqueStudentId } = req.params;
+
+    // Validate the incoming project data
+    const validatedProjectData = projectSchema.parse(projectData);
+
+    // Update the project data using the spread operator
+    const updatedProject = await ProjectModel.findOneAndUpdate(
+        { uniqueStudentId },
+        { ...validatedProjectData }, // Spread the validated data
+        { new: true, runValidators: true } // Options to return the updated document and run validations
+    );
+
+    // Check if the project data was found and updated
+    if (!updatedProject) {
+        throw new Error(`No project data found for existing student with unique ID: ${uniqueStudentId}`);
+    }
+
+    return updatedProject.toObject(); // Return the updated project data as an object
+}
+
+    // method to get project data for a single student using uniqueStudentId
+    async getProjectData(req: Request): Promise<IProject>{
+
+    }
+
+    //method to get project data for all students
+    async getAllProjectData(req: Request): Promise<IProject>{
+
+    }
+}
 export default ProjectService; // Export the ProjectService class
