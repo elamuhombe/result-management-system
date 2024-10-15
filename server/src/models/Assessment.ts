@@ -42,4 +42,4 @@ const AssessmentModel = mongoose.model<IAssessmentMark & Document>(
   assessmentMarkSchema
 );
 
-export { AssessmentModel }; // Export the model
+export default AssessmentModel ; // Export the model
