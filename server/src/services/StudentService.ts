@@ -42,24 +42,28 @@ export class StudentService {
     });
   }
 
-  // Update student information
-  updateStudentData(req: Request): Promise<IStudent | null> {
-    const { studentId } = req.params;
-    const { firstName, lastName, email } = req.body;
+// Update student information
+updateStudentData(req: Request): Promise<IStudent | null> {
+  const { studentId } = req.params;
+  const { firstName, lastName, email } = req.body;
 
-    // Find and update the student
-    return StudentModel.findByIdAndUpdate(
-      studentId,
-      { firstName, lastName, email },
-      { new: true, runValidators: true }
-    ).then(updatedStudent => {
-      if (!updatedStudent) {
-        throw new Error("Student not found");
-      }
+  // Create an object with the fields to update using the spread operator
+  const updatedData = { firstName, lastName, email };
 
-      return updatedStudent.toObject(); // Return the updated student data
-    });
-  }
+  // Find and update the student
+  return StudentModel.findByIdAndUpdate(
+    studentId,
+    { $set: { ...updatedData } }, // Use the spread operator to include all fields
+    { new: true, runValidators: true }
+  ).then(updatedStudent => {
+    if (!updatedStudent) {
+      throw new Error("Student not found");
+    }
+
+    return updatedStudent.toObject(); // Return the updated student data
+  });
+}
+
 
   // Manage student results
   manageResults(req: Request, resultsData: IResult): Promise<IResult> {
