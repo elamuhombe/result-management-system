@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 // Define the validation schema for assessment marks
-export const assessmentSchema = z.object({
+export const AssessmentSchema = z.object({
     uniqueStudentId: z.string().min(1, "Unique Student ID is required."),
     assessment_title: z.string().min(1, "Assessment title is required."),
     assessment_score: z.number().min(0, "Assessment score must be at least 0."),
@@ -17,4 +17,4 @@ export const assessmentSchema = z.object({
 });
 
 // Type inference from the schema
-export type IAssessmentMark = z.infer<typeof assessmentSchema>;
+export type IAssessmentMark = z.infer<typeof AssessmentSchema>;
