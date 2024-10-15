@@ -49,15 +49,38 @@ async updateProjectData(req: Request, projectData: IProject): Promise<IProject> 
 
     return updatedProject.toObject(); // Return the updated project data as an object
 }
+// Method to get project data for a single student using uniqueStudentId
+async getProjectData(req: Request): Promise<IProject> {
+    const { uniqueStudentId } = req.params;
 
-    // method to get project data for a single student using uniqueStudentId
-    async getProjectData(req: Request): Promise<IProject>{
+    try {
+        // Find the project data for the specified uniqueStudentId
+        const studentProjectData = await ProjectModel.findOne({ uniqueStudentId });
 
+        // Check if project data exists
+        if (!studentProjectData) {
+            throw new Error(`Project data for student with unique ID: ${uniqueStudentId} not found`);
+        }
+
+        // Return the found project data
+        return studentProjectData;
+    } catch (error) {
+        throw new Error(`Error fetching student project data`);
     }
+}
+        
+    
+// Method to get project data for all students
+async getAllProjectData(req: Request): Promise<IProject[]> {
+    try {
+        // Retrieve all project data from the database
+        const allProjectsData: IProject[] = await ProjectModel.find({});
 
-    //method to get project data for all students
-    async getAllProjectData(req: Request): Promise<IProject>{
-
+        // Return the found project data
+        return allProjectsData;
+    } catch (error) {
+        throw new Error(`Error fetching all project data`);
     }
+}
 }
 export default ProjectService; // Export the ProjectService class
