@@ -9,8 +9,8 @@ const ProjectSchema: Schema<IProject & Document> = new Schema({
     uniqueStudentId: { type: String, required: true, ref: "Students" },
     project_title: { type: String, required: true }, // Title of the project
     submission_date: { type: Date, required: true }, // Date of submission
-    review_score: { type: Number, required: true }, // Marks received for the project review
-    submission_score: { type: Number, required: true }, // Marks received for the project submission
+    project_review_score: { type: Number, required: true }, // Marks received for the project review
+    project_submission_score: { type: Number, required: true }, // Marks received for the project submission
     maximum_score: { type: Number, required: true }, // Maximum score possible
 }, { timestamps: true }); // Automatically manage createdAt and updatedAt timestamps
 
