@@ -93,6 +93,33 @@ class LinkedinService {
     }
   }
   // Method to update LinkedIn Scores for a student using unique student id
+  // Method to update LinkedIn Scores for a student using unique student ID
+async updateLinkedInScoreById(
+    req: Request,
+    updatedScoreData: Partial<ILinkedInPostMark>
+  ): Promise<ILinkedInPostMark> {
+    const { uniqueStudentId } = req.params;
+    
+    try {
+      // Find the student by uniqueStudentId and update their LinkedIn score
+      const updatedLinkedInData = await LinkedInModel.findOneAndUpdate(
+        { uniqueStudentId },
+        { $set: updatedScoreData },
+        { new: true } // Return the updated document
+      );
+  
+      // Check if the student data exists
+      if (!updatedLinkedInData) {
+        throw new Error(`Student with unique ID: ${uniqueStudentId} not found`);
+      }
+  
+      // Return the updated LinkedIn data
+      return updatedLinkedInData;
+    } catch (error) {
+      throw new Error(`Error updating LinkedIn data`);
+    }
+  }
+  
 }
 
 export default new LinkedinService();
