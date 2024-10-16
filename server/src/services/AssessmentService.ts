@@ -1,4 +1,4 @@
-import { error } from "console";
+//src/services/AssessmentService.ts
 import { Request } from "express";
 import { IAssessmentMark, IProject } from "../types/types";
 import { AssessmentSchema } from "../validators/AssessmentSchema";
@@ -13,75 +13,80 @@ class AssessmentService {
   ): Promise<IAssessmentMark> {
     // Validate the incoming assessment data using AssessmentSchema
     const validatedAssessmentData = AssessmentSchema.parse(assessmentData);
-
-    // Destructure validated fields from the validated assessment data
-    const {
-      uniqueStudentId,
-      assessment_title,
-      assessment_score,
-      submission_date,
-      maximumScore,
-    } = validatedAssessmentData;
-
+  
     // Check if assessment data for the given student already exists
-    return AssessmentModel.findOne({ uniqueStudentId }).then(
+    return AssessmentModel.findOne({ uniqueStudentId: validatedAssessmentData.uniqueStudentId }).then(
       (existingAssessmentData) => {
         // If data already exists, throw an error
         if (existingAssessmentData) {
-          throw error(
-            `assessment data for student with unique id ${uniqueStudentId} already exists `
+          throw new Error(
+            `Assessment data for student with unique id ${validatedAssessmentData.uniqueStudentId} already exists.`
           );
         }
-
-        // Create a new assessment entry if no existing data is found
+  
+        // Create a new assessment entry using the spread operator
         const newAssessmentData = new AssessmentModel({
-          uniqueStudentId,
-          assessment_title,
-          assessment_score,
-          submission_date,
-          maximumScore,
+          ...validatedAssessmentData, // Spread the validated data into the new object
         });
-
+  
         // Save the new assessment data to the database and return the saved object
         return newAssessmentData.save();
       }
     );
   }
+  
   // Method to get assessment marks for a single student using uniqueStudentId
-  async getAssessmentMarksById(req: Request): Promise<IAssessmentMark> {
-    const { uniqueStudentId } = req.params;
-
+  public async getAssessmentMarksById(uniqueStudentId: string): Promise<IAssessmentMark> {
     try {
-      // Find the project data for the specified uniqueStudentId
-      const assessmentProjectData = await AssessmentModel.findOne({
-        uniqueStudentId,
+      // Find the assessment data for the specified uniqueStudentId
+      const assessmentData = await AssessmentModel.findOne({
+        uniqueStudentId, // Search criteria for finding the assessment data
       });
 
-      // Check if project data exists
-      if (!assessmentProjectData) {
-        throw new Error(
-          `Project data for student with unique ID: ${uniqueStudentId} not found`
-        );
+      // Check if assessment data exists
+      if (!assessmentData) {
+        throw new Error(`Assessment data for student with unique ID: ${uniqueStudentId} not found`);
       }
 
-      // Return the found project data
-      return assessmentProjectData;
+      // Return the found assessment data
+      return assessmentData;
     } catch (error) {
-      throw new Error(`Error fetching student project data`);
+      throw new Error(`Error fetching student project data: `); // Handle any errors during data fetching
     }
   }
-  // get all assessment marks'
+
+  // Method to get all assessment marks
   async getAllAssessmentMarks(req: Request): Promise<IAssessmentMark[]> {
     try {
+      // Retrieve all assessment marks from the database
       const allAssessmentMarks: IAssessmentMark[] = await AssessmentModel.find(
         {}
       );
-      // return all assessment marks
+      // Return all assessment marks
       return allAssessmentMarks;
     } catch (error) {
-      throw new Error("Error fetching all assessment data");
+      throw new Error("Error fetching all assessment data"); // Handle errors in fetching data
+    }
+  }
+
+  // Method to update assessment data
+  async updateAssessmentData(req: Request): Promise<IAssessmentMark>{
+    try {
+      // Extract uniqueStudentId from the request parameters
+      const { uniqueStudentId } = req.params;
+      // Find and update the assessment data for the specified uniqueStudentId
+      const updatedData = await AssessmentModel.findOneAndUpdate({ uniqueStudentId });
+      // Check if the update was successful
+      if (!updatedData) {
+        throw new Error(`Error updating data for student with unique id: ${uniqueStudentId}`);
+      }
+      // Return the updated assessment data
+      return updatedData;
+    } catch (error) {
+      throw new Error('Error occurred in updating assessment data'); // Handle errors during the update
     }
   }
 }
 
+// Export the AssessmentService class as the default export
 export default AssessmentService;
