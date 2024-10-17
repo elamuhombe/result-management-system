@@ -2,7 +2,6 @@
 import { z } from 'zod';
 
 export const UserSchema = z.object({
-  userId: z.string().uuid(), // Validate userId as a UUID
   username: z.string()
     .min(3, { message: "Username must be at least 3 characters long" }) // Minimum length
     .max(30, { message: "Username cannot exceed 30 characters" }) // Maximum length
