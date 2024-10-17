@@ -5,11 +5,11 @@ import { IAttendance } from "../types/types";
 
 const AttendanceSchema: Schema<IAttendance & Document> = new Schema(
   {
-    studentId:{  type: mongoose.Schema.Types.ObjectId, required: true, ref: "Students"},
+
     uniqueStudentId: { type: String, required: true, ref: "Students" },
     date: { type: Date, required: true },
     status: { type: String, enum: ["Present", "Absent"], required: true },
-    marks: {type: Number, required: true}
+    attendance_score: {type: Number, required: true}
   },
   { timestamps: true }
 );

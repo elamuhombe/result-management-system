@@ -5,7 +5,6 @@ import { IProject } from "../types/types";
 
 // Define the schema for Project
 const ProjectSchema: Schema<IProject & Document> = new Schema({
-    studentId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Students" }, // Reference to the Student model
     uniqueStudentId: { type: String, required: true, ref: "Students" },
     project_title: { type: String, required: true }, // Title of the project
     submission_date: { type: Date, required: true }, // Date of submission
