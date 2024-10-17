@@ -3,9 +3,6 @@
 import { IResult } from "../types/types";
 import ResultRepository from "./repositories/ResultRepository";
 
-
-
-
 class ResultService {
   // Other existing methods...
 
