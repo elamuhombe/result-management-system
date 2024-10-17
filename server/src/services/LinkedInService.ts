@@ -1,125 +1,91 @@
-//src/services/LinkedInService.ts
 import { Request } from "express";
 import { ILinkedInPostMark } from "../types/types";
 import { linkedInSchema } from "../validators/LinkedInSchema";
-import LinkedInModel from "../models/LinkedIn";
+import LinkedInRepository from "./repositories/LinkedInRepository";
+import LinkedInScoreCalculator from "../utils/LinkedInScoreCalculator";
 
-class LinkedinService {
-  // Function to calculate LinkedIn score based on engagement metrics
-  private calculateLinkedInScore(engagementMetrics: {
-    likes: number;
-    comments: number;
-    shares: number;
-  }): number {
-    const { likes, comments, shares } = engagementMetrics;
+class LinkedInService {
+  private linkedInRepository: LinkedInRepository; // Repository instance for managing LinkedIn data
+  private scoreCalculator: LinkedInScoreCalculator; // Score calculator instance for calculating scores
 
-    // Define weights
-    const weights = {
-      likes: 0.2,
-      comments: 0.5,
-      shares: 0.3,
-    };
-
-    // Calculate the score
-    const score =
-      likes * weights.likes +
-      comments * weights.comments +
-      shares * weights.shares;
-
-    // Return the score rounded to two decimal places
-    return parseFloat(score.toFixed(2));
+  constructor() {
+    // Initialize the repository and score calculator in the constructor
+    this.linkedInRepository = new LinkedInRepository();
+    this.scoreCalculator = new LinkedInScoreCalculator();
   }
 
+  // Method to add a LinkedIn score based on provided data
   async addLinkedInScore(
-    req: Request,
-    linkedInData: ILinkedInPostMark
+    req: Request, // Request object for accessing request parameters
+    linkedInData: ILinkedInPostMark // LinkedIn data to be added
   ): Promise<ILinkedInPostMark> {
-    // Validate the input data using Zod schema
-    const validatedLinkedInData = linkedInSchema.parse(linkedInData);
-    const { uniqueStudentId, postId, engagementMetrics } =
-      validatedLinkedInData;
+    try {
+      // Validate the input data using Zod schema
+      const validatedLinkedInData = linkedInSchema.parse(linkedInData);
+      const { uniqueStudentId, postId, engagementMetrics } = validatedLinkedInData;
 
-    // Calculate the LinkedIn score based on engagement metrics
-    const linkedin_score = this.calculateLinkedInScore(engagementMetrics);
+      // Calculate the LinkedIn score based on engagement metrics
+      const linkedin_score = this.scoreCalculator.calculateLinkedInScore(engagementMetrics);
 
-    // Check if LinkedIn score already exists for the student
-    return LinkedInModel.findOne({ uniqueStudentId, postId })
-      .then((existingLinkedInData) => {
-        if (existingLinkedInData) {
-          throw new Error("LinkedIn Score already exists for this post.");
-        }
+      // Check if a LinkedIn score already exists for the student and post
+      const existingLinkedInData = await this.linkedInRepository.findLinkedInScore(uniqueStudentId, postId);
+      if (existingLinkedInData) {
+        throw new Error("LinkedIn Score already exists for this post."); // Error if score already exists
+      }
 
-        // Create a new LinkedIn post mark entry
-        const newLinkedInData = new LinkedInModel({
-          uniqueStudentId,
-          postId,
-          linkedin_score,
-          engagementMetrics,
-        });
-
-        // Save the new LinkedIn data
-        return newLinkedInData.save();
-      })
-      .catch((err) => {
-        // Handle any errors
-        throw new Error(`Error adding LinkedIn score: ${err.message}`);
+      // Create a new LinkedIn post mark entry with the calculated score
+      const newLinkedInData = await this.linkedInRepository.saveLinkedInScore({
+        ...validatedLinkedInData,
+        linkedin_score, // Include the calculated score in the saved data
       });
+
+      return newLinkedInData; // Return the newly created LinkedIn data
+    } catch (error: any) {
+      // Log any errors that occur during processing
+      console.error("Error in addLinkedInScore:", error);
+
+      // Rethrow the specific error if it's one of your defined error types
+      if (error.message === "LinkedIn Score already exists for this post.") {
+        throw error; // Rethrow the specific error
+      }
+
+      // Throw a new error with additional details for debugging
+      throw new Error(`Error adding LinkedIn score: ${error.message}`); // Include original error message for debugging
+    }
   }
 
   // Method to get LinkedIn Scores for a student using unique student id
   async getLinkedInScoreById(req: Request): Promise<ILinkedInPostMark> {
-    const { uniqueStudentId } = req.params;
-    try {
-      const linkedInData = await LinkedInModel.findOne({ uniqueStudentId });
+    const { uniqueStudentId } = req.params; // Extract unique student ID from request parameters
+    const linkedInData = await this.linkedInRepository.findLinkedInScoresByStudentId(uniqueStudentId); // Fetch LinkedIn data by student ID
 
-      if (!linkedInData) {
-        throw new Error(
-          `Error fetching linkedin data for student with unique id ${uniqueStudentId}`
-        );
-      }
-      return linkedInData;
-    } catch (error) {
-      throw new Error("Error fetching linkedin data");
+    if (!linkedInData) {
+      throw new Error(`Error fetching LinkedIn data for student with unique ID: ${uniqueStudentId}`); // Error if no data found
     }
+    return linkedInData; // Return the fetched LinkedIn data
   }
 
-  // Method to get all linkedIn Scores
+  // Method to get all LinkedIn Scores
   async getAllLinkedinData(req: Request): Promise<ILinkedInPostMark[]> {
-    try {
-      const allLinkedInData = await LinkedInModel.find({});
-      return allLinkedInData;
-    } catch (error) {
-      throw new Error("Error fetching all LinkedIn data");
-    }
+    return await this.linkedInRepository.findAllLinkedInScores(); // Fetch and return all LinkedIn scores
   }
-  // Method to update LinkedIn Scores for a student using unique student id
+
   // Method to update LinkedIn Scores for a student using unique student ID
-async updateLinkedInScoreById(
-    req: Request,
-    updatedScoreData: Partial<ILinkedInPostMark>
+  async updateLinkedInScoreById(
+    req: Request, // Request object for accessing request parameters
+    updatedScoreData: Partial<ILinkedInPostMark> // Updated score data
   ): Promise<ILinkedInPostMark> {
-    const { uniqueStudentId } = req.params;
-    
-    try {
-      // Find the student by uniqueStudentId and update their LinkedIn score
-      const updatedLinkedInData = await LinkedInModel.findOneAndUpdate(
-        { uniqueStudentId },
-        { $set: updatedScoreData },
-        { new: true } // Return the updated document
-      );
-  
-      // Check if the student data exists
-      if (!updatedLinkedInData) {
-        throw new Error(`Student with unique ID: ${uniqueStudentId} not found`);
-      }
-  
-      // Return the updated LinkedIn data
-      return updatedLinkedInData;
-    } catch (error) {
-      throw new Error(`Error updating LinkedIn data`);
+    const { uniqueStudentId } = req.params; // Extract unique student ID from request parameters
+
+    // Update the LinkedIn score using the repository
+    const updatedLinkedInData = await this.linkedInRepository.updateLinkedInScore(uniqueStudentId, updatedScoreData);
+
+    if (!updatedLinkedInData) {
+      throw new Error(`Student with unique ID: ${uniqueStudentId} not found`); // Error if student not found
     }
+
+    return updatedLinkedInData; // Return the updated LinkedIn data
   }
-  
 }
 
-export default new LinkedinService();
+export default LinkedInService; // Export the LinkedInService class for use in other modules
