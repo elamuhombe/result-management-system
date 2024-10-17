@@ -6,3 +6,4 @@ export {default as AttendanceMarksService} from  './AttendanceService';
 export {default as LinkedInService} from  './LinkedInService';
 export {default as ProjectService} from  './ProjectService';
 export {default as StudentService} from  './StudentService'
+export {default as ResultService} from  './ResultService'
