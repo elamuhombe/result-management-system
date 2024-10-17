@@ -4,9 +4,11 @@ import mongoose from 'mongoose';
 
 // Define the validation schema for the ILinkedInPostMark interface
 export const linkedInSchema = z.object({
-    uniqueStudentId: z.custom<mongoose.Types.ObjectId>((value) => {
-        return mongoose.Types.ObjectId.isValid(value);
-    }, "Invalid Student ID"), // Required ObjectId reference to Student
+    uniqueStudentId: z
+    .string()
+    .refine((value) => mongoose.Types.ObjectId.isValid(value), {
+      message: "Invalid Student ID", // Custom error message
+    }),
     postId: z.string().nonempty("Post ID is required"), // Required string for the LinkedIn post ID
     linkedin_score: z.number().min(0, "LinkedIn score must be at least 0").max(100, "LinkedIn score must be at most 100"), // Score must be between 0 and 100
     engagementMetrics: z.object({
