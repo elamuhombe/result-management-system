@@ -5,7 +5,7 @@ import { ResultModel, StudentModel } from "../models";
 import { IResult, IStudent } from "../types/types";
 import { studentSchema } from "../validators/StudentSchema";
 
-export class StudentService {
+class StudentService {
   // Add and save a new student
   addStudent(req: Request, studentData: IStudent): Promise<IStudent> {
     // Validate student data
@@ -86,3 +86,4 @@ updateStudentData(req: Request): Promise<IStudent | null> {
       });
   }
 }
+export default StudentService
