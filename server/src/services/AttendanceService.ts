@@ -18,13 +18,12 @@ async addAttendanceData(
   attendanceData: IAttendance
 ): Promise<IAttendance> {
   const validatedAttendanceData = attendanceSchema.parse(attendanceData);
-  const { uniqueStudentId, date } = validatedAttendanceData;
+  const {uniqueStudentId, date} = req.body;
+
 
   const existingAttendanceMarks =
-    await this.attendanceRepository.findAttendanceByStudentIdAndDate(
-      uniqueStudentId,
-      date
-    );
+    await this.attendanceRepository.findAllAttendance()
+   
 
   if (existingAttendanceMarks) {
     throw new Error(
@@ -32,7 +31,7 @@ async addAttendanceData(
     );
   }
 
-  return this.attendanceRepository.saveAttendance(validatedAttendanceData);
+  return this.attendanceRepository.createAndSaveAttendance(validatedAttendanceData);
 }
 
 
