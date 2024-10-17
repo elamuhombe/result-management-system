@@ -18,7 +18,7 @@ export interface IStudent {
 
 export interface IResult {
   uniqueStudentId: string;
-  studentId: mongoose.Types.ObjectId;
+  //studentId: mongoose.Types.ObjectId;
   attendance_score: number;
   project_review_score: number;
   assessment_score: number;
@@ -27,7 +27,6 @@ export interface IResult {
 }
 
 export interface IAttendance {
-  studentId: mongoose.Types.ObjectId;
   uniqueStudentId: string;
   date: Date;
   status: "Present" | "Absent";
@@ -35,7 +34,6 @@ export interface IAttendance {
 }
 
 export interface IProject {
-  studentId: mongoose.Types.ObjectId // ObjectId reference to Student
   uniqueStudentId: string;
   project_title: string; // title of the project
   submission_date: Date; // date of submission
