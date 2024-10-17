@@ -23,8 +23,8 @@ class AuthController {
   // Controller to handle user login
   public async loginUser(req: Request, res: Response): Promise<Response> {
     try {
-      const { username, password } = req.body;
-      const { user, token } = await this.authService.login(username, password);
+      const { username, password, role } = req.body;
+      const { user, token } = await this.authService.loginUser(username);
 
       // response
       return res.status(201).json({
