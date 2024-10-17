@@ -1,86 +1,76 @@
 // src/services/ProjectService.ts
 import { Request } from "express";
-import { ProjectModel } from "../models";
 import { IProject } from "../types/types";
 import { projectSchema } from "../validators/ProjectSchema";
+import ProjectRepository from "./repositories/ProjectRepository";
 
 class ProjectService {
-   // Method to add project data
-async addProjectData(req: Request, projectData: IProject): Promise<IProject> {
+  private projectRepository: ProjectRepository;
+
+  constructor() {
+    this.projectRepository = new ProjectRepository();
+  }
+
+  // Method to add project data
+  async addProjectData(req: Request, projectData: IProject): Promise<IProject> {
     // Validate the incoming project data
     const validatedProjectData = projectSchema.parse(projectData);
-
-    // Destructure the validated project data
     const { uniqueStudentId } = validatedProjectData;
 
     // Check for existing project data
-    const existingProjectData = await ProjectModel.findOne({ uniqueStudentId });
+    const existingProjectData =
+      await this.projectRepository.findProjectByUniqueId(uniqueStudentId);
     if (existingProjectData) {
-        throw new Error(`Project data for student with unique ID: ${uniqueStudentId} already exists.`);
+      throw new Error(
+        `Project data for student with unique ID: ${uniqueStudentId} already exists.`
+      );
     }
 
-    // Create new project data using the spread operator
-    const newProjectData = new ProjectModel({
-        ...validatedProjectData, // Spread the validated data to include all fields
-    });
+    // Create new project data using the repository
+    return await this.projectRepository.createProject(validatedProjectData);
+  }
 
-    return newProjectData.save(); // Save the new project data
-}
-
-
-    // Method to update project data for a single student
-async updateProjectData(req: Request, projectData: IProject): Promise<IProject> {
+  // Method to update project data for a single student
+  async updateProjectData(
+    req: Request,
+    projectData: IProject
+  ): Promise<IProject> {
     const { uniqueStudentId } = req.params;
-
-    // Validate the incoming project data
     const validatedProjectData = projectSchema.parse(projectData);
 
-    // Update the project data using the spread operator
-    const updatedProject = await ProjectModel.findOneAndUpdate(
-        { uniqueStudentId },
-        { ...validatedProjectData }, // Spread the validated data
-        { new: true, runValidators: true } // Options to return the updated document and run validations
+    // Update the project data using the repository
+    const updatedProject = await this.projectRepository.updateProject(
+      uniqueStudentId,
+      validatedProjectData
     );
-
-    // Check if the project data was found and updated
     if (!updatedProject) {
-        throw new Error(`No project data found for existing student with unique ID: ${uniqueStudentId}`);
+      throw new Error(
+        `No project data found for existing student with unique ID: ${uniqueStudentId}`
+      );
     }
 
-    return updatedProject.toObject(); // Return the updated project data as an object
-}
-// Method to get project data for a single student using uniqueStudentId
-async getProjectData(req: Request): Promise<IProject> {
+    return updatedProject;
+  }
+
+  // Method to get project data for a single student using uniqueStudentId
+  async getProjectData(req: Request): Promise<IProject> {
     const { uniqueStudentId } = req.params;
+    const studentProjectData =
+      await this.projectRepository.findProjectByUniqueId(uniqueStudentId);
 
-    try {
-        // Find the project data for the specified uniqueStudentId
-        const studentProjectData = await ProjectModel.findOne({ uniqueStudentId });
-
-        // Check if project data exists
-        if (!studentProjectData) {
-            throw new Error(`Project data for student with unique ID: ${uniqueStudentId} not found`);
-        }
-
-        // Return the found project data
-        return studentProjectData;
-    } catch (error) {
-        throw new Error(`Error fetching student project data`);
+    if (!studentProjectData) {
+      throw new Error(
+        `Project data for student with unique ID: ${uniqueStudentId} not found`
+      );
     }
-}
-        
-    
-// Method to get project data for all students
-async getAllProjectData(req: Request): Promise<IProject[]> {
-    try {
-        // Retrieve all project data from the database
-        const allProjectsData: IProject[] = await ProjectModel.find({});
 
-        // Return the found project data
-        return allProjectsData;
-    } catch (error) {
-        throw new Error(`Error fetching all project data`);
-    }
+    return studentProjectData;
+  }
+
+  // Method to get project data for all students
+  async getAllProjectData(req: Request): Promise<IProject[]> {
+    return await this.projectRepository.getAllProjects();
+  }
 }
-}
+
 export default ProjectService; // Export the ProjectService class
