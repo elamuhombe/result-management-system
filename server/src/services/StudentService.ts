@@ -28,18 +28,20 @@ class StudentService {
     });
   }
 
-  // Retrieve student information
-  getStudentData(req: Request): Promise<IStudent | null> {
-    const { studentId } = req.params;
+   // Retrieve student information
+   public async getStudentData({ uniqueStudentId }: { uniqueStudentId: string }): Promise<IStudent | null> {
+    try {
+      // Find and return the student by uniqueStudentId
+      const studentData = await StudentModel.findOne({ uniqueStudentId });
 
-    // Find and return the student by studentId
-    return StudentModel.findOne({ _id: studentId }).then(studentData => {
       if (!studentData) {
         throw new Error("Student not found");
       }
 
       return studentData.toObject(); // Return the student data as an object
-    });
+    } catch (error: any) {
+      throw new Error(error.message || "Failed to retrieve student data");
+    }
   }
 
 // Update student information
